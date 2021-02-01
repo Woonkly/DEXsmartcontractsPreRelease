@@ -1,0 +1,189 @@
+{
+	"compiler": {
+		"version": "0.6.12+commit.27d51765"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "RemovedFromOwners",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "addNewInOwners",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "OwnerExist",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getAllOwners",
+				"outputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "address[]",
+						"name": "",
+						"type": "address[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "index",
+						"type": "uint256"
+					}
+				],
+				"name": "getOwnerByIndex",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getOwnersCount",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "newInOwners",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "removeFromOwners",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"localhost/utils/Owners.sol": "Owners"
+		},
+		"evmVersion": "istanbul",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 300
+		},
+		"remappings": []
+	},
+	"sources": {
+		"localhost/contracts/GSN/Context.sol": {
+			"keccak256": "0xc0f30b81734ae3650a4bf087da53d98d8b2fb2a3a2115c9c1ab1188b908fed9d",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://f197afed59f8cc9ff9d7c97aa9e34338b563e5271597e8e85e886227667b16d2",
+				"dweb:/ipfs/QmUnU1NFhUpU4ao4BMUxhVvD5HHVb5Run5woxAPwKWKw6x"
+			]
+		},
+		"localhost/contracts/math/SafeMath.sol": {
+			"keccak256": "0x1c5cf17a7147effa82f2d2b96a3785ad94d39f858740b7505cce9a363382a340",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://72ae1afc2d66e23ff53c8255d5d0efb3962165c23e11bd473e65cd5739d774d7",
+				"dweb:/ipfs/QmfEntnqoAXCW8tVNCBuVzMkZcgkpRbAHjMJXAz98niDWt"
+			]
+		},
+		"localhost/utils/Owners.sol": {
+			"keccak256": "0x3707c3c1bd87b127a3d9ed54dc4e29a0220d85c4c8ae7fdddd7953f18fc8187c",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://d472a2f308d3322f021d5fca2d17e7dfc3ea6b096161c38dcf33ecff86812694",
+				"dweb:/ipfs/QmQezKagkKQHbSoWKR78rKj7HAuZBJpznGX1xvXjD56NyW"
+			]
+		}
+	},
+	"version": 1
+}

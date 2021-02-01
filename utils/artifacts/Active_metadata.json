@@ -1,0 +1,168 @@
+{
+	"compiler": {
+		"version": "0.6.12+commit.27d51765"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "previousOwner",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "OwnershipTransferred",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "bool",
+						"name": "paused",
+						"type": "bool"
+					}
+				],
+				"name": "Paused",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "isPaused",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "renounceOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bool",
+						"name": "paused",
+						"type": "bool"
+					}
+				],
+				"name": "setPause",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "transferOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {
+				"owner()": {
+					"details": "Returns the address of the current owner."
+				},
+				"renounceOwnership()": {
+					"details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner."
+				},
+				"transferOwnership(address)": {
+					"details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+				}
+			},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"localhost/utils/Active.sol": "Active"
+		},
+		"evmVersion": "istanbul",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"localhost/contracts/GSN/Context.sol": {
+			"keccak256": "0xc0f30b81734ae3650a4bf087da53d98d8b2fb2a3a2115c9c1ab1188b908fed9d",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://f197afed59f8cc9ff9d7c97aa9e34338b563e5271597e8e85e886227667b16d2",
+				"dweb:/ipfs/QmUnU1NFhUpU4ao4BMUxhVvD5HHVb5Run5woxAPwKWKw6x"
+			]
+		},
+		"localhost/contracts/access/Ownable.sol": {
+			"keccak256": "0xff64ef424eaf85a7b6c316c6abb40e5f34e8a9818f59cef84e88d0c3a4169c6d",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://e4dfd2d57d34171844f86e2df13a68a2a90c8d58ae54fe6c37d967511386342d",
+				"dweb:/ipfs/QmRFxrS3ZfRBNPgjGxQK4DE3BTrTjBbJQuzkMx7wxvAZV4"
+			]
+		},
+		"localhost/utils/Active.sol": {
+			"keccak256": "0xc1adc868091ad0f35651fe7724882726af3992821a3999b812cf9b342214916c",
+			"urls": [
+				"bzz-raw://a61c9275b9dff3341d89b14f78553cb05c5386e66c70377ea9681b6bb89ecbb3",
+				"dweb:/ipfs/QmT3z8dakdSMxLX4TksXZ9wYaqzqAv7jrwZYesDBfgxyXU"
+			]
+		}
+	},
+	"version": 1
+}
