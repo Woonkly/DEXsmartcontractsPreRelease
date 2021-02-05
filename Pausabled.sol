@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.6.6;
 
-import "./../utils/Owners.sol";
+import "https://github.com/Woonkly/MartinHSolUtils/Owners.sol";
 
 contract Pausabled is Owners{
 

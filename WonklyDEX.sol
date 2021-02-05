@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.6.6;
 
-import "./../contracts/math/SafeMath.sol";
-import "./../contracts/token/ERC20/ERC20.sol";
-import "./../contracts/utils/ReentrancyGuard.sol";
+import "https://github.com/Woonkly/OpenZeppelinBaseContracts/contracts/math/SafeMath.sol";
+import "https://github.com/Woonkly/OpenZeppelinBaseContracts/contracts/token/ERC20/ERC20.sol";
+import "https://github.com/Woonkly/OpenZeppelinBaseContracts/contracts/utils/ReentrancyGuard.sol";
 
-import "./Pausabled.sol";
-import "./StakeManager.sol";
-import "./IwoonklyPOS.sol";
+import "https://github.com/Woonkly/DEXsmartcontractsPreRelease/Pausabled.sol";
+import "https://github.com/Woonkly/DEXsmartcontractsPreRelease/StakeManager.sol";
+import "https://github.com/Woonkly/DEXsmartcontractsPreRelease/IwoonklyPOS.sol";
 
-import "./IWStaked.sol";
+import "https://github.com/Woonkly/DEXsmartcontractsPreRelease/IWStaked.sol";
 
 
 
@@ -474,7 +474,7 @@ struct Stake {
 
 
 
-    function getCalcRewardAmount(address account,  uint256 amount) public  returns(uint256,uint256){
+    function getCalcRewardAmount(address account,  uint256 amount) public view returns(uint256,uint256){
         
         if(!_stakes.StakeExist(account)) return (0,0);
 
@@ -706,7 +706,7 @@ struct Stake {
 
 
 
-    function getValuesLiqWithdraw(address investor, uint256 liq) public  returns(uint256, uint256){
+    function getValuesLiqWithdraw(address investor, uint256 liq) public view returns(uint256, uint256){
         
         if(!_stakes.StakeExist(investor)){
             return (0,0);
@@ -729,7 +729,7 @@ struct Stake {
 
 
 
-    function getMaxValuesLiqWithdraw(address investor) public  returns(uint256,uint256, uint256){
+    function getMaxValuesLiqWithdraw(address investor) public view  returns(uint256,uint256, uint256){
         if(!_stakes.StakeExist(investor)){
             return (0,0,0);
         }

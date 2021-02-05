@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.6.6;
 
-import "./../contracts/math/SafeMath.sol";
-import "./../contracts/token/ERC20/ERC20.sol";
-import "./../utils/Utils.sol";
+import "https://github.com/Woonkly/OpenZeppelinBaseContracts/contracts/math/SafeMath.sol";
+import "https://github.com/Woonkly/OpenZeppelinBaseContracts/contracts/token/ERC20/ERC20.sol";
+import "https://github.com/Woonkly/MartinHSolUtils/Utils.sol";
 
-import "./../utils/Owners.sol";
+import "https://github.com/Woonkly/MartinHSolUtils/Owners.sol";
+
 
 contract StakeManager   is Owners,ERC20{
 
