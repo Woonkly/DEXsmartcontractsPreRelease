@@ -470,6 +470,8 @@ struct Stake {
             
             address(uint160(account)).transfer(amount);
 
+            _coin_reserve = address(this).balance;
+
             remainder = bnb.sub(amount);
             
 
