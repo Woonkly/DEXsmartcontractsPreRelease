@@ -235,6 +235,8 @@ contract WonklyDEX  is Owners,PausabledLMH, ReentrancyGuard {
 
     
     event CoinReceived(uint256 coins);
+    
+    
       receive() external payable {
             if(!isPaused()) {
                 coinToToken();
@@ -477,9 +479,14 @@ struct Stake {
         
         IWStaked stk=getSTK(isSH);
         
+        require( stk.StakeExist(account) ,"!E");
+        
+        /*
         if(!stk.StakeExist(account)){
             return false;
         }
+        */
+        
         
         uint256 bnb=0;
         uint256 woop=0;
@@ -495,7 +502,7 @@ struct Stake {
             
             address(uint160(account)).transfer(amount);
 
-            _coin_reserve = address(this).balance;
+            //_coin_reserve = address(this).balance;
 
             remainder = bnb.sub(amount);
             
@@ -512,13 +519,17 @@ struct Stake {
             remainder = woop.sub(amount);
         }
         
-        
+        _coin_reserve = address(this).balance;
+       
+       /* 
         if(remainder==0){
             stk.changeReward(account,0, isCoin,1);    
         }else{
             stk.changeReward(account,remainder, isCoin,1);    
         }
+        */
         
+        stk.changeReward(account,remainder, isCoin,1);    
         
     }
 
@@ -779,7 +790,7 @@ struct Stake {
         
         uint256 liquidity_minted = msg.value.mul(totalLiquidity) / eth_reserve;
         
-        _coin_reserve=_coin_reserve.add(msg.value);    
+        _coin_reserve =address(this).balance;    
         
         _addStake(_msgSender(), liquidity_minted, isSH);
         
@@ -900,9 +911,9 @@ struct Stake {
         
         require(totalLiquidity>0,"DX:0");
         
-        IWStaked stk=getSTK(isSH);
+    //    IWStaked stk=getSTK(isSH);
         
-        require( stk.StakeExist(_msgSender()),"DX:!");    
+      //  require( stk.StakeExist(_msgSender()),"DX:!");    
 
         return _withdrawFunds( _msgSender(), liquid,isSH);
         
