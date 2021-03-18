@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+pragma solidity ^0.6.6;
 
 /**
 MIT License
@@ -24,7 +25,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 */
-pragma solidity ^0.6.6;
+
 
 
 interface IwoonklyPOS{
