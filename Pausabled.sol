@@ -29,18 +29,27 @@ SOFTWARE.
 */
 
 contract Pausabled is Owners {
+    //Section Type declarations
+
+    //Section State variables
+
     bool internal _paused;
 
+    //Section Modifier
     modifier Active() {
         require(!isPaused(), "paused");
         _;
     }
 
+    //Section Events
+
+    event Paused(bool paused);
+
+    //Section functions
+
     function isPaused() public view returns (bool) {
         return _paused;
     }
-
-    event Paused(bool paused);
 
     function _setPause(bool paused) internal virtual returns (bool) {
         _paused = paused;

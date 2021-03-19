@@ -36,8 +36,26 @@ SOFTWARE.
 
 contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
     using SafeMath for uint256;
-    IERC20 token;
 
+    //Section Type declarations
+    struct Stake {
+        address account;
+        uint256 bnb;
+        uint256 bal;
+        uint256 woop;
+        uint8 flag;
+    }
+
+    struct processRewardInfo {
+        uint256 remainder;
+        uint256 woopsRewards;
+        uint256 dealed;
+        address me;
+        bool resp;
+    }
+
+    //Section State variables
+    IERC20 token;
     uint256 public totalLiquidity;
     uint32 internal _fee;
     uint32 internal _baseFee;
@@ -52,6 +70,64 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
     address internal _stakeableSH;
     address internal _woopSharedFunds;
     uint256 internal _gasRequired;
+
+    //Section Modifier
+
+    //Section Events
+    event FeeChanged(uint32 oldFee, uint32 newFee);
+    event BaseFeeChanged(uint32 oldbFee, uint32 newbFee);
+    event GasRequiredChanged(uint256 oldg, uint256 newg);
+    event OperationsChanged(address oldOp, address newOp);
+    event WoonklyPOSChanged(address oldaddr, address newaddr);
+    event BeneficiaryChanged(address oldBn, address newBn);
+    event StakeAddrChanged(address old, address news);
+    event StakeSHAddrChanged(address old, address news);
+    event WoopSHFundsChanged(address old, address news);
+    event CoinReceived(uint256 coins);
+    event PoolCreated(
+        uint256 totalLiquidity,
+        address investor,
+        uint256 token_amount
+    );
+    event PoolClosed(
+        uint256 eth_reserve,
+        uint256 token_reserve,
+        uint256 liquidity,
+        address destination
+    );
+    event InsuficientRewardFund(address account, bool isCoin, bool isSH);
+    event NewLeftover(address account, uint256 leftover, bool isCoin);
+    event PurchasedTokens(
+        address purchaser,
+        uint256 coins,
+        uint256 tokens_bought
+    );
+    event FeeTokens(
+        uint256 bnPart,
+        uint256 liqPart,
+        uint256 opPart,
+        address beneficiary,
+        address operations
+    );
+    event TokensSold(address vendor, uint256 eth_bought, uint256 token_amount);
+    event FeeCoins(
+        uint256 bnPart,
+        uint256 liqPart,
+        uint256 opPart,
+        address beneficiary,
+        address operations
+    );
+    event LiquidityChanged(uint256 oldLiq, uint256 newLiq, bool isSH);
+
+    event LiquidityWithdraw(
+        address investor,
+        uint256 coins,
+        uint256 token_amount,
+        uint256 newliquidity,
+        bool isSH
+    );
+
+    //Section functions
 
     constructor(
         address token_addr,
@@ -87,8 +163,6 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         return _fee;
     }
 
-    event FeeChanged(uint32 oldFee, uint32 newFee);
-
     function setFee(uint32 newFee) external onlyIsInOwners returns (bool) {
         require((newFee > 0 && newFee <= 1000000), "DX:!");
         uint32 old = _fee;
@@ -101,8 +175,6 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         return _baseFee;
     }
 
-    event BaseFeeChanged(uint32 oldbFee, uint32 newbFee);
-
     function setBaseFee(uint32 newbFee) external onlyIsInOwners returns (bool) {
         require((newbFee > 0 && newbFee <= 1000000), "DX:!");
         uint32 old = _baseFee;
@@ -114,8 +186,6 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
     function getGasRequired() public view returns (uint256) {
         return _gasRequired;
     }
-
-    event GasRequiredChanged(uint256 oldg, uint256 newg);
 
     function setGasRequired(uint256 newg)
         external
@@ -131,8 +201,6 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
     function getOperations() public view returns (address) {
         return _operations;
     }
-
-    event OperationsChanged(address oldOp, address newOp);
 
     function setOperations(address newOp)
         external
@@ -150,8 +218,6 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         return _woonckyPOS;
     }
 
-    event WoonklyPOSChanged(address oldaddr, address newaddr);
-
     function setWoonklyPOS(address newAddr)
         external
         onlyIsInOwners
@@ -167,8 +233,6 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
     function getBeneficiary() public view returns (address) {
         return _beneficiary;
     }
-
-    event BeneficiaryChanged(address oldBn, address newBn);
 
     function setBeneficiary(address newBn)
         external
@@ -186,8 +250,6 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         return _stakeable;
     }
 
-    event StakeAddrChanged(address old, address news);
-
     function setStakeAddr(address news) external onlyIsInOwners returns (bool) {
         require(news != address(0), "!0");
         address old = _stakeable;
@@ -200,8 +262,6 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
     function getStakeAddrSH() public view returns (address) {
         return _stakeableSH;
     }
-
-    event StakeSHAddrChanged(address old, address news);
 
     function setStakeSHAddr(address news)
         external
@@ -220,8 +280,6 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         return _woopSharedFunds;
     }
 
-    event WoopSHFundsChanged(address old, address news);
-
     function setWoopSHFunds(address news)
         external
         onlyIsInOwners
@@ -234,8 +292,6 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         emit WoopSHFundsChanged(old, news);
         return true;
     }
-
-    event CoinReceived(uint256 coins);
 
     receive() external payable {
         if (!isPaused()) {
@@ -282,12 +338,6 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
 
         return true;
     }
-
-    event PoolCreated(
-        uint256 totalLiquidity,
-        address investor,
-        uint256 token_amount
-    );
 
     function createPool(uint256 token_amount)
         external
@@ -340,21 +390,6 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         emit PoolCreated(_coin_reserve, _msgSender(), token_amount);
         return totalLiquidity;
     }
-
-    struct Stake {
-        address account;
-        uint256 bnb;
-        uint256 bal;
-        uint256 woop;
-        uint8 flag;
-    }
-
-    event PoolClosed(
-        uint256 eth_reserve,
-        uint256 token_reserve,
-        uint256 liquidity,
-        address destination
-    );
 
     function closePool() public onlyIsInOwners nonReentrant returns (bool) {
         require(totalLiquidity > 0, "DX:0");
@@ -472,14 +507,6 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         return price(coin_amount, _coin_reserve, token_reserve);
     }
 
-    struct processRewardInfo {
-        uint256 remainder;
-        uint256 woopsRewards;
-        uint256 dealed;
-        address me;
-        bool resp;
-    }
-
     function WithdrawReward(
         uint256 amount,
         bool isCoin,
@@ -588,9 +615,6 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         return (part, remainder);
     }
 
-    event InsuficientRewardFund(address account, bool isCoin, bool isSH);
-    event NewLeftover(address account, uint256 leftover, bool isCoin);
-
     function _DealLiquidity(
         uint256 amount,
         bool isCoin,
@@ -643,19 +667,6 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
             return wsc.processReward(_woonclyBEP20, amount);
         }
     }
-
-    event PurchasedTokens(
-        address purchaser,
-        uint256 coins,
-        uint256 tokens_bought
-    );
-    event FeeTokens(
-        uint256 bnPart,
-        uint256 liqPart,
-        uint256 opPart,
-        address beneficiary,
-        address operations
-    );
 
     function coinToToken() public payable nonReentrant returns (uint256) {
         require(!isPaused(), "p");
@@ -723,15 +734,6 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
 
         return tokens_bought;
     }
-
-    event TokensSold(address vendor, uint256 eth_bought, uint256 token_amount);
-    event FeeCoins(
-        uint256 bnPart,
-        uint256 liqPart,
-        uint256 opPart,
-        address beneficiary,
-        address operations
-    );
 
     function tokenToCoin(uint256 token_amount)
         external
@@ -820,8 +822,6 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
             (coinDeposit.mul(token.balanceOf(address(this))) / _coin_reserve)
                 .add(1);
     }
-
-    event LiquidityChanged(uint256 oldLiq, uint256 newLiq, bool isSH);
 
     function AddLiquidity(bool isSH)
         external
@@ -914,14 +914,6 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         uint256 token_amount = inv.mul(token_reserve) / totalLiquidity;
         return (inv, eth_amount, token_amount);
     }
-
-    event LiquidityWithdraw(
-        address investor,
-        uint256 coins,
-        uint256 token_amount,
-        uint256 newliquidity,
-        bool isSH
-    );
 
     function _withdrawFunds(
         address account,

@@ -34,6 +34,8 @@ SOFTWARE.
 contract StakeManager is Owners, ERC20 {
     using SafeMath for uint256;
 
+    //Section Type declarations
+
     struct Stake {
         address account;
         uint256 bnb;
@@ -41,13 +43,49 @@ contract StakeManager is Owners, ERC20 {
         uint8 flag; //0 no exist  1 exist 2 deleted
     }
 
-    // las index of
+    //Section State variables
     uint256 internal _lastIndexStakes;
-    // store new  by internal  id (_lastIndexStakes)
     mapping(uint256 => Stake) internal _Stakes;
-    // store address  -> internal  id (_lastIndexStakes)
     mapping(address => uint256) internal _IDStakesIndex;
     uint256 internal _StakeCount;
+
+    //Section Modifier
+    modifier onlyNewStake(address account) {
+        require(!this.StakeExist(account), "This Stake account exist");
+        _;
+    }
+
+    modifier onlyStakeExist(address account) {
+        require(StakeExist(account), "This Stake account not exist");
+        _;
+    }
+
+    modifier onlyStakeIndexExist(uint256 index) {
+        require(StakeIndexExist(index), "This Stake index not exist");
+        _;
+    }
+
+    //Section Events
+
+    event addNewStake(address account, uint256 amount);
+    event StakeAdded(address account, uint256 oldAmount, uint256 newAmount);
+    event StakeReNewed(address account, uint256 oldAmount, uint256 newAmount);
+    event RewaredChanged(
+        address account,
+        uint256 amount,
+        bool isCoin,
+        uint8 set
+    );
+    event StakeRemoved(address account);
+    event StakeSubstracted(
+        address account,
+        uint256 oldAmount,
+        uint256 subAmount,
+        uint256 newAmount
+    );
+    event AllStakeRemoved();
+
+    //Section functions
 
     constructor(string memory name, string memory symbol)
         public
@@ -94,23 +132,6 @@ contract StakeManager is Owners, ERC20 {
         return false;
     }
 
-    modifier onlyNewStake(address account) {
-        require(!this.StakeExist(account), "This Stake account exist");
-        _;
-    }
-
-    modifier onlyStakeExist(address account) {
-        require(StakeExist(account), "This Stake account not exist");
-        _;
-    }
-
-    modifier onlyStakeIndexExist(uint256 index) {
-        require(StakeIndexExist(index), "This Stake index not exist");
-        _;
-    }
-
-    event addNewStake(address account, uint256 amount);
-
     function newStake(address account, uint256 amount)
         external
         onlyIsInOwners
@@ -135,8 +156,6 @@ contract StakeManager is Owners, ERC20 {
         return _lastIndexStakes;
     }
 
-    event StakeAdded(address account, uint256 oldAmount, uint256 newAmount);
-
     function addToStake(address account, uint256 addAmount)
         external
         onlyIsInOwners
@@ -152,8 +171,6 @@ contract StakeManager is Owners, ERC20 {
 
         return _IDStakesIndex[account];
     }
-
-    event StakeReNewed(address account, uint256 oldAmount, uint256 newAmount);
 
     function renewStake(address account, uint256 newAmount)
         external
@@ -174,13 +191,6 @@ contract StakeManager is Owners, ERC20 {
 
         return _IDStakesIndex[account];
     }
-
-    event RewaredChanged(
-        address account,
-        uint256 amount,
-        bool isCoin,
-        uint8 set
-    );
 
     function changeReward(
         address account,
@@ -233,8 +243,6 @@ contract StakeManager is Owners, ERC20 {
         emit RewaredChanged(account, amount, isCoin, set);
     }
 
-    event StakeRemoved(address account);
-
     function removeStake(address account)
         external
         onlyIsInOwners
@@ -252,13 +260,6 @@ contract StakeManager is Owners, ERC20 {
         _StakeCount = _StakeCount.sub(1);
         emit StakeRemoved(account);
     }
-
-    event StakeSubstracted(
-        address account,
-        uint256 oldAmount,
-        uint256 subAmount,
-        uint256 newAmount
-    );
 
     function substractFromStake(address account, uint256 subAmount)
         external
@@ -361,8 +362,6 @@ contract StakeManager is Owners, ERC20 {
 
         return (indexs, pACCs, pAmounts, pBNB, pWOOP);
     }
-
-    event AllStakeRemoved();
 
     function removeAllStake() external onlyIsInOwners returns (bool) {
         for (uint32 i = 0; i < (_lastIndexStakes + 1); i++) {

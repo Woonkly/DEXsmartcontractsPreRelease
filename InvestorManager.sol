@@ -31,19 +31,46 @@ SOFTWARE.
 contract InvestorManager {
     using SafeMath for uint256;
 
+    //Section Type declarations
+
     struct Investor {
         address account;
         uint256 liquidity;
         uint8 flag; //0 no exist  1 exist 2 deleted
     }
 
-    // las index of
+    //Section State variables
+
     uint256 internal _lastIndexInvestors;
-    // store new  by internal  id (_lastIndexInvestors)
     mapping(uint256 => Investor) internal _Investors;
-    // store address  -> internal  id (_lastIndexInvestors)
     mapping(address => uint256) internal _IDInvestorsIndex;
     uint256 internal _InvestorCount;
+
+    //Section Modifier
+    modifier onlyNewInvestor(address account) {
+        require(!this.InvestorExist(account), "This Investor account exist");
+        _;
+    }
+
+    modifier onlyInvestorExist(address account) {
+        require(this.InvestorExist(account), "This Investor account not exist");
+        _;
+    }
+
+    modifier onlyInvestorIndexExist(uint256 index) {
+        require(
+            this.InvestorIndexExist(index),
+            "This Investor index not exist"
+        );
+        _;
+    }
+
+    //Section Events
+
+    event addNewInvestor(address account, uint256 liquidity);
+    event removeInvestor(address account);
+
+    //Section functions
 
     constructor() internal {
         _lastIndexInvestors = 0;
@@ -74,26 +101,6 @@ contract InvestorManager {
         return false;
     }
 
-    modifier onlyNewInvestor(address account) {
-        require(!this.InvestorExist(account), "This Investor account exist");
-        _;
-    }
-
-    modifier onlyInvestorExist(address account) {
-        require(this.InvestorExist(account), "This Investor account not exist");
-        _;
-    }
-
-    modifier onlyInvestorIndexExist(uint256 index) {
-        require(
-            this.InvestorIndexExist(index),
-            "This Investor index not exist"
-        );
-        _;
-    }
-
-    event addNewInvestor(address account, uint256 liquidity);
-
     function newInvestor(address account, uint256 liquidity)
         internal
         onlyNewInvestor(account)
@@ -122,8 +129,6 @@ contract InvestorManager {
             setInvestorAddLiquidity(account, liquidity);
         }
     }
-
-    event removeInvestor(address account);
 
     function disableInvestor(address account)
         internal
