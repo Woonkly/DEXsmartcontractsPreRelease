@@ -164,7 +164,7 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
     }
 
     function setFee(uint32 newFee) external onlyIsInOwners returns (bool) {
-        require((newFee > 0 && newFee <= 1000000), "DX:!");
+        require((newFee > 0 && newFee <= 1000000), "1");
         uint32 old = _fee;
         _fee = newFee;
         emit FeeChanged(old, _fee);
@@ -176,7 +176,7 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
     }
 
     function setBaseFee(uint32 newbFee) external onlyIsInOwners returns (bool) {
-        require((newbFee > 0 && newbFee <= 1000000), "DX:!");
+        require((newbFee > 0 && newbFee <= 1000000), "1");
         uint32 old = _baseFee;
         _baseFee = newbFee;
         emit FeeChanged(old, _baseFee);
@@ -207,7 +207,7 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         onlyIsInOwners
         returns (bool)
     {
-        require(newOp != address(0), "DX:0addr");
+        require(newOp != address(0), "1");
         address old = _operations;
         _operations = newOp;
         emit OperationsChanged(old, _operations);
@@ -223,7 +223,7 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         onlyIsInOwners
         returns (bool)
     {
-        require(newAddr != address(0), "!0");
+        require(newAddr != address(0), "1");
         address old = _woonckyPOS;
         _woonckyPOS = newAddr;
         emit WoonklyPOSChanged(old, _woonckyPOS);
@@ -239,7 +239,7 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         onlyIsInOwners
         returns (bool)
     {
-        require(newBn != address(0), "DX:0addr");
+        require(newBn != address(0), "1");
         address old = _beneficiary;
         _beneficiary = newBn;
         emit BeneficiaryChanged(old, _beneficiary);
@@ -251,7 +251,7 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
     }
 
     function setStakeAddr(address news) external onlyIsInOwners returns (bool) {
-        require(news != address(0), "!0");
+        require(news != address(0), "1");
         address old = _stakeable;
         _stakeable = news;
         _stakes = IWStaked(news);
@@ -268,7 +268,7 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         onlyIsInOwners
         returns (bool)
     {
-        require(news != address(0), "!0");
+        require(news != address(0), "1");
         address old = _stakeableSH;
         _stakeableSH = news;
         _stakesSH = IWStaked(news);
@@ -285,7 +285,7 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         onlyIsInOwners
         returns (bool)
     {
-        require(news != address(0), "!0");
+        require(news != address(0), "1");
         address old = _woopSharedFunds;
         _woopSharedFunds = news;
 
@@ -347,12 +347,12 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
     {
         require(
             token.allowance(_msgSender(), address(this)) >= token_amount,
-            "!aptk"
+            "0"
         );
 
-        require(!_stakes.StakeExist(_msgSender()), "DX:!");
-        require(totalLiquidity == 0, "DEX:i");
-        require(msg.value > 0, "DX:I");
+        require(!_stakes.StakeExist(_msgSender()), "1");
+        require(totalLiquidity == 0, "2");
+        require(msg.value > 0, "3");
         totalLiquidity = address(this).balance;
         _coin_reserve = totalLiquidity;
 
@@ -371,16 +371,16 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         nonReentrant
         returns (uint256)
     {
-        require(isPaused(), "p");
+        require(isPaused(), "1");
 
         require(
             token.allowance(_msgSender(), address(this)) >= token_amount,
-            "!aptk"
+            "2"
         );
 
-        require(totalLiquidity == 0, "DEX:i");
+        require(totalLiquidity == 0, "3");
 
-        require(msg.value > 0, "DX:I");
+        require(msg.value > 0, "4");
 
         totalLiquidity = newLiq;
         _coin_reserve = address(this).balance;
@@ -392,11 +392,11 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
     }
 
     function closePool() public onlyIsInOwners nonReentrant returns (bool) {
-        require(totalLiquidity > 0, "DX:0");
+        require(totalLiquidity > 0, "5");
 
         uint256 token_reserve = token.balanceOf(address(this));
 
-        require(token.transfer(_operations, token_reserve), "DX:1");
+        require(token.transfer(_operations, token_reserve), "6");
         address payable ow = address(uint160(_operations));
 
         _coin_reserve = address(this).balance;
@@ -514,9 +514,9 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
     ) external nonReentrant returns (bool) {
         IWStaked stk = getSTK(isSH);
 
-        require(!isPaused(), "p");
+        require(!isPaused(), "1");
 
-        require(stk.StakeExist(_msgSender()), "DX:!");
+        require(stk.StakeExist(_msgSender()), "2");
 
         _withdrawReward(_msgSender(), amount, isCoin, isSH);
 
@@ -536,18 +536,12 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         uint256 amount,
         bool isCoin,
         bool isSH
-    ) internal returns (bool) {
-        require(!isPaused(), "p");
+    ) internal nonReentrant returns (bool) {
+        require(!isPaused(), "1");
 
         IWStaked stk = getSTK(isSH);
 
-        require(stk.StakeExist(account), "!E");
-
-        /*
-        if(!stk.StakeExist(account)){
-            return false;
-        }
-        */
+        require(stk.StakeExist(account), "2");
 
         uint256 bnb = 0;
         uint256 woop = 0;
@@ -557,36 +551,26 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         uint256 remainder = 0;
 
         if (isCoin) {
-            require(amount <= bnb, "DX:1");
+            require(amount <= bnb, "3");
 
-            require(amount <= getMyCoinBalance(), "DX:-c");
+            require(amount <= getMyCoinBalance(), "4");
 
             address(uint160(account)).transfer(amount);
-
-            //_coin_reserve = address(this).balance;
 
             remainder = bnb.sub(amount);
         } else {
             //token
 
-            require(amount <= woop, "DX:amew");
+            require(amount <= woop, "5");
 
-            require(amount <= getMyTokensBalance(), "DX:-tk");
+            require(amount <= getMyTokensBalance(), "6");
 
-            require(token.transfer(account, amount), "DX:5");
+            require(token.transfer(account, amount), "7");
 
             remainder = woop.sub(amount);
         }
 
         _coin_reserve = address(this).balance;
-
-        /* 
-        if(remainder==0){
-            stk.changeReward(account,0, isCoin,1);    
-        }else{
-            stk.changeReward(account,remainder, isCoin,1);    
-        }
-        */
 
         stk.changeReward(account, remainder, isCoin, 1);
     }
@@ -669,11 +653,11 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
     }
 
     function coinToToken() public payable nonReentrant returns (uint256) {
-        require(!isPaused(), "p");
+        require(!isPaused(), "1");
 
-        require(totalLiquidity > 0, "DX:0");
+        require(totalLiquidity > 0, "2");
 
-        require(!isOverLimit(msg.value, true), "DX:c");
+        require(!isOverLimit(msg.value, true), "3");
 
         uint256 token_reserve = token.balanceOf(address(this));
 
@@ -682,12 +666,10 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         uint256 tokens_bought0fee =
             planePrice(msg.value, _coin_reserve, token_reserve);
 
-        //_coin_reserve=_coin_reserve.add(msg.value);
-
         _coin_reserve = address(this).balance;
 
-        require(tokens_bought <= getMyTokensBalance(), "DX:a");
-        require(token.transfer(_msgSender(), tokens_bought), "DX:b");
+        require(tokens_bought <= getMyTokensBalance(), "4");
+        require(token.transfer(_msgSender(), tokens_bought), "5");
 
         emit PurchasedTokens(_msgSender(), msg.value, tokens_bought);
 
@@ -700,12 +682,12 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         (tokens_bnPart, tokens_liqPart, tokens_opPart) = calcDeal(tokens_fee);
 
         if (_woonckyPOS == address(0)) {
-            require(token.transfer(_beneficiary, tokens_bnPart), "DX:1");
+            require(token.transfer(_beneficiary, tokens_bnPart), "6");
         } else {
             _triggerReward(tokens_bnPart, false);
         }
 
-        require(token.transfer(_operations, tokens_opPart), "DX:3");
+        require(token.transfer(_operations, tokens_opPart), "7");
 
         processRewardInfo memory slot;
 
@@ -728,7 +710,7 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         uint256 leftover = tokens_liqPart.sub(slot.dealed);
 
         if (leftover > 0) {
-            require(token.transfer(_operations, leftover), "DX:4");
+            require(token.transfer(_operations, leftover), "8");
             emit NewLeftover(_operations, leftover, false);
         }
 
@@ -740,16 +722,16 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         nonReentrant
         returns (uint256)
     {
-        require(!isPaused(), "p");
+        require(!isPaused(), "1");
 
         require(
             token.allowance(_msgSender(), address(this)) >= token_amount,
-            "!aptk"
+            "2"
         );
 
-        require(totalLiquidity > 0, "DX:0");
+        require(totalLiquidity > 0, "3");
 
-        require(!isOverLimit(token_amount, false), "DX:c");
+        require(!isOverLimit(token_amount, false), "4");
 
         uint256 token_reserve = token.balanceOf(address(this));
 
@@ -758,7 +740,7 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         uint256 eth_bought0fee =
             planePrice(token_amount, token_reserve, _coin_reserve);
 
-        require(eth_bought <= getMyCoinBalance(), "DX:!");
+        require(eth_bought <= getMyCoinBalance(), "5");
 
         _msgSender().transfer(eth_bought);
 
@@ -819,7 +801,7 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         returns (uint256)
     {
         return
-            (coinDeposit.mul(token.balanceOf(address(this))) / _coin_reserve)
+            (coinDeposit.mul(token.balanceOf(address(this))).div(_coin_reserve))
                 .add(1);
     }
 
@@ -829,7 +811,7 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         nonReentrant
         returns (uint256)
     {
-        require(!isPaused(), "p");
+        require(!isPaused(), "1");
 
         uint256 eth_reserve = _coin_reserve;
 
@@ -844,10 +826,11 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         require(
             origin != address(0) &&
                 token.allowance(origin, address(this)) >= token_amount,
-            "DX:1"
+            "2"
         );
 
-        uint256 liquidity_minted = msg.value.mul(totalLiquidity) / eth_reserve;
+        uint256 liquidity_minted =
+            msg.value.mul(totalLiquidity).div(eth_reserve);
 
         _coin_reserve = address(this).balance;
 
@@ -883,9 +866,9 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
             return (0, 0);
         }
 
-        uint256 eth_amount = liq.mul(_coin_reserve) / totalLiquidity;
+        uint256 eth_amount = liq.mul(_coin_reserve).div(totalLiquidity);
         uint256 token_amount =
-            liq.mul(token.balanceOf(address(this))) / totalLiquidity;
+            liq.mul(token.balanceOf(address(this))).div(totalLiquidity);
         return (eth_amount, token_amount);
     }
 
@@ -910,8 +893,8 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
 
         (inv, , ) = stk.getStake(investor);
 
-        uint256 eth_amount = inv.mul(_coin_reserve) / totalLiquidity;
-        uint256 token_amount = inv.mul(token_reserve) / totalLiquidity;
+        uint256 eth_amount = inv.mul(_coin_reserve).div(totalLiquidity);
+        uint256 token_amount = inv.mul(token_reserve).div(totalLiquidity);
         return (inv, eth_amount, token_amount);
     }
 
@@ -922,23 +905,23 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
     ) internal returns (uint256, uint256) {
         IWStaked stk = getSTK(isSH);
 
-        require(stk.StakeExist(account), "DX:!");
+        require(stk.StakeExist(account), "1");
 
         uint256 inv_liq;
 
         (inv_liq, , ) = stk.getStake(account);
 
-        require(liquid <= inv_liq, "DX:3");
+        require(liquid <= inv_liq, "2");
 
         uint256 token_reserve = token.balanceOf(address(this));
 
-        uint256 eth_amount = liquid.mul(_coin_reserve) / totalLiquidity;
+        uint256 eth_amount = liquid.mul(_coin_reserve).div(totalLiquidity);
 
-        uint256 token_amount = liquid.mul(token_reserve) / totalLiquidity;
+        uint256 token_amount = liquid.mul(token_reserve).div(totalLiquidity);
 
-        require(eth_amount <= getMyCoinBalance(), "DX:1");
+        require(eth_amount <= getMyCoinBalance(), "3");
 
-        require(token_amount <= getMyTokensBalance(), "DX:2");
+        require(token_amount <= getMyTokensBalance(), "4");
 
         stk.substractFromStake(account, liquid);
 
@@ -972,13 +955,9 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         nonReentrant
         returns (uint256, uint256)
     {
-        require(!isPaused(), "p");
+        require(!isPaused(), "1");
 
-        require(totalLiquidity > 0, "DX:0");
-
-        //    IWStaked stk=getSTK(isSH);
-
-        //  require( stk.StakeExist(_msgSender()),"DX:!");
+        require(totalLiquidity > 0, "2");
 
         return _withdrawFunds(_msgSender(), liquid, isSH);
     }
