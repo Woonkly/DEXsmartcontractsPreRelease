@@ -329,10 +329,8 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         IWStaked stk = getSTK(isSH);
 
         if (!stk.StakeExist(account)) {
-            //NEW
             stk.newStake(account, amount);
         } else {
-            //has funds
             stk.addToStake(account, amount);
         }
 
@@ -443,10 +441,11 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
             uint256
         )
     {
-        uint256 p4 = amount.mul(444) / 1000;
-        uint256 p1 = amount - (p4 + p4);
+        uint256 stake = amount.mul(286) / 1000;
+        uint256 liq = amount.mul(571) / 1000;
+        uint256 oper = amount - (stake + liq);
 
-        return (p4, p4, p1);
+        return (stake, liq, oper);
     }
 
     function isOverLimit(uint256 amount, bool isCoin)
@@ -536,7 +535,7 @@ contract WonklyDEX is Owners, PausabledLMH, ReentrancyGuard {
         uint256 amount,
         bool isCoin,
         bool isSH
-    ) internal nonReentrant returns (bool) {
+    ) internal returns (bool) {
         require(!isPaused(), "1");
 
         IWStaked stk = getSTK(isSH);
